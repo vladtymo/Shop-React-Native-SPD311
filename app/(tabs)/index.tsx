@@ -1,7 +1,7 @@
 import { Link } from "expo-router";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import ProductList from "./components/ProductList";
+import ProductList from "../components/ProductList";
 
 export default function Index() {
   return (
