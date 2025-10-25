@@ -1,3 +1,4 @@
+import { storage } from "@/services/storage";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
 import { Product } from "../models/Product";
@@ -17,7 +18,15 @@ export default function ProductList() {
     fetch(api)
       .then((res) => res.json())
       .then((json) => setProducts(json))
+      .then(() => loadStoredProducts())
       .catch((err) => Alert.alert("Error", err.message));
+  };
+
+  const loadStoredProducts = async () => {
+    const storedProducts = await storage.load<Product[]>("products");
+    if (storedProducts) {
+      setProducts([...storedProducts, ...products]);
+    }
   };
 
   const addNewProduct = (item: Product): void => {
@@ -26,6 +35,8 @@ export default function ProductList() {
       id: Number(products.length + 1),
     };
     setProducts([newItem, ...products]);
+
+    storage.save<Product[]>("products", [newItem, ...products]);
   };
 
   return (
