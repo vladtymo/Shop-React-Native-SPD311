@@ -47,6 +47,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="db_orm"
+        options={{
+          title: "ORM",
+          tabBarIcon: ({ color, focused }) => (
+            <MaterialIcons name="storage" size={24} color="black" />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
