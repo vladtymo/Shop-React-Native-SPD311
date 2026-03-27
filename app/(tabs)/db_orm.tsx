@@ -1,5 +1,6 @@
+import { addItem } from "@/services/db_orm";
 import * as schema from "@/services/db_schema";
-import { productsTable } from "@/services/db_schema";
+import { productsTable, ProductTable } from "@/services/db_schema";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
@@ -14,11 +15,8 @@ import {
 } from "react-native";
 
 const DatabaseORM = () => {
-  const db = useSQLiteContext();
-  const drizzleDb = drizzle(db, { schema });
-  const [products, setProducts] = useState<
-    (typeof productsTable.$inferSelect)[]
-  >([]);
+  const db = drizzle(useSQLiteContext(), { schema });
+  const [products, setProducts] = useState<ProductTable[]>([]);
 
   //const [items, setItems] = useState<Product[]>([]);
   const [text, setText] = useState<string>("");
@@ -32,7 +30,7 @@ const DatabaseORM = () => {
     //init();
 
     //setItems((await getItems()) ?? []);
-    drizzleDb.select().from(productsTable).then(setProducts);
+    db.select().from(productsTable).then(setProducts);
     console.log("loading...");
   };
 
@@ -40,24 +38,29 @@ const DatabaseORM = () => {
     if (!text.trim()) return;
 
     //const createdItem = await addItem(text);
-    drizzleDb
-      .insert(productsTable)
-      .values({ title: text })
-      .then((result) => {
-        const createdItem = { id: Number(result.lastInsertRowId), title: text };
 
-        setProducts([...products, createdItem]);
+    // db.insert(productsTable)
+    //   .values({ title: text })
+    //   .then((result) => {
+    //     const createdItem = { id: Number(result.lastInsertRowId), title: text };
 
-        setText("");
-        console.log("added...");
-      });
+    //     setProducts([...products, createdItem]);
+
+    //     setText("");
+    //     console.log("added...");
+    //   });
+
+    addItem(db, text).then((createdItem) => {
+      setProducts([...products, createdItem]);
+      setText("");
+      console.log("added...");
+    });
   };
 
   const removeItemHandle = async (id: number) => {
     //await deleteItem(id);
 
-    drizzleDb
-      .delete(productsTable)
+    db.delete(productsTable)
       .where(eq(productsTable.id, id))
       .then(() => {
         setProducts(products.filter((item) => item.id !== id));

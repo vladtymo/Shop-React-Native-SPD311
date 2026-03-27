@@ -5,5 +5,5 @@ export const productsTable = sqliteTable("products", {
   title: text().notNull(),
 });
 
-// Export Product to use as an interface in your app
-export type Product = typeof productsTable.$inferSelect;
+// Export ProductTable to use as an interface in your app
+export type ProductTable = typeof productsTable.$inferSelect;
